@@ -60,24 +60,29 @@ impl EventHandler for Handler {
         if msg_stripped.contains("goldengod") {
             let reply = responses.golden_god.choose(&mut rand::thread_rng()).expect("[goldengod] random choice is empty");
             if let Err(why) = msg
-                .channel_id
-                .say(&ctx.http, reply)
+                .reply(&ctx.http, reply)
                 .await {
                     println!("Error sending message: {:?}", why);
             }
         }
         if msg_stripped.contains("goodbot") {
             let image = responses.good_bot.choose(&mut rand::thread_rng()).expect("[goodbot] random choice is empty");
-            if let Err(why) = msg
-                .channel_id
-                .send_message(&ctx.http, |m| {
-                    m.embed(|e| e
+            let rep_msg = msg.reply(&ctx.http, ".").await;
+            if let Err(why) = rep_msg {
+                println!("Error sending message: {:?}", why);
+                return;
+            }
+            if let Err(why) = rep_msg
+                .unwrap()
+                .edit(&ctx.http, |m| {
+                    m.content("")
+                        .embed(|e| e
                         .title("You're the one that's good.")
                         .image(image)
                         .color(0xf1c40f))
-                })
-                .await {
-                    println!("Error sending message: {:?}", why);
+                    
+                }).await {
+                    println!("Error editing message: {:?}", why);
             }
         }
     }
