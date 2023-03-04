@@ -44,7 +44,8 @@ impl EventHandler for Handler {
         
         /* strip the message of non-word characters */
         let re = Regex::new(r"\W+").unwrap();
-        let msg_stripped = re.replace_all(&msg.content, "");
+        let ms = re.replace_all(&msg.content, "");
+        let msg_stripped = ms.to_ascii_lowercase();
 
         /* grab the strings of responses */
         let responses = {
