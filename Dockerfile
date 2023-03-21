@@ -1,5 +1,12 @@
-FROM rust:latest
+# Build stage
+FROM rust:latest as builder
 WORKDIR /app
-COPY . .
+ADD . /app
 RUN cargo build --release
-CMD ["./target/release/golden-god-bot"]
+
+# Prod stage
+FROM gcr.io/distroless/cc
+WORKDIR /app
+COPY --from=builder /app/target/release/golden-god-bot /app
+COPY --from=builder /app/json/ /app/json/
+CMD ["./golden-god-bot"]
