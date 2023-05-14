@@ -14,6 +14,8 @@ use rand::seq::SliceRandom;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
+use serenity::model::gateway::Activity;
+use serenity::model::user::OnlineStatus;
 use serenity::prelude::*;
 
 #[derive(Deserialize)]
@@ -91,7 +93,7 @@ impl EventHandler for Handler {
     // shard is booted, and a READY payload is sent by Discord. This payload
     // contains data like the current user's guild Ids, current user data,
     // private channels, and more.
-    async fn ready(&self, _: Context, ready: Ready) {
+    async fn ready(&self, ctx: Context, ready: Ready) {
         println!("------");
         println!("{} v{}", ready.user.name, env!("CARGO_PKG_VERSION"));
         println!("ID: {}", ready.user.id);
@@ -99,6 +101,8 @@ impl EventHandler for Handler {
         // println!("Serenity API version: {}", serenity::prelude::);
         println!("Running on: {} ({})", env::consts::OS, env::consts::ARCH);
         println!("------");
+
+        ctx.set_presence(Some(Activity::playing("I REIGN SUPREME! I! IIII!")), OnlineStatus::Online).await;
     }
 }
 
